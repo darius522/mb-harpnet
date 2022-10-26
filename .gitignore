@@ -1,0 +1,14 @@
+__*
+experiment/
+lightning_logs/
+models/waveunet
+plots/
+results/
+visqol/
+confs/
+*.ckpt
+*.png
+*.pdf
+*.wav
+*.ckpt
+*.ipynb

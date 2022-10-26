@@ -1,0 +1,47 @@
+# Training config
+epochs: 200
+batch_size: 10
+acc_grad: 2
+val_dur: 80.0
+
+# Optim config
+optimizer: adam
+lr: 0.0005
+patience: 20
+lr_decay_patience: 3
+lr_decay_gamma: 0.5
+weight_decay: 0.00001
+
+# Data config
+data_dir_in: ../data/etri_32_full
+data_dir_out1: ../data/etri_32_cb
+data_dir_out2: ../data/etri_32_hb
+sr: 32000
+num_workers: 4
+seed: 42
+H: 16384 # chunk size
+scaler: 1.0
+devices: '0'
+
+# Network config
+checkpoint: null # Set to null to train from scratch
+model: harpnet'
+save_path: './experiment/paper/_dummy'
+save_name: '48'
+save_version: 'test_64kbps_cb'
+
+# Hyper-parameters: Model
+loss_weights:
+  entropy: 0.0
+  freq: 0.0
+  quant: 0.0
+  snr: 1.0
+in_channels: 1
+
+# Hyper-parameters: Quant/Entropy
+quant_epoch: 202 # Num epoch after which the quant kicks in
+target_bitrates: [30000] # Target bitrate in kbps
+bitrate_fuzzes: [640] # Allowed bitrate window
+quant_alpha: 0 # Initial hardness of the quantization
+tau_changes: [0.005, 0.01] # change rate of the quantization regularizer loss term: [tau_ent_down, tau_quant_down]
+alpha_decrease: 1.0 # alpha annealing
