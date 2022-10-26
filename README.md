@@ -1,2 +1,2 @@
-# Code repository for the Multi-Band HARP-Net paper, submitted at ICASSP2023
+# Code repository for the paper "Native Multi-Band Audio Coding\\within Hyper-Autoencoded Reconstruction Propagation Networks", submitted at ICASSP2023
 
