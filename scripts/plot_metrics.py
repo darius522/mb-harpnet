@@ -60,7 +60,7 @@ def plotBoxMetrics(results, plotTitle=''):
 	capprops = dict(color='#00145A')
 	medianprops = dict(linewidth=2.0, linestyle='-', color='#6e0101')
 	meanprops = dict(linewidth=2.0, linestyle='--', color='#017507')
-	bb = plt.boxplot(vals, labels=real_names, labelcolors='black,'
+	bb = plt.boxplot(vals, labels=real_names, labelcolors='black',
 		notch=False, 
 		boxprops=boxprops, 
 		whiskerprops=whiskerprops,
