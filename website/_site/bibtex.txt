@@ -1,0 +1,5 @@
+@inproceedings{petermann2023mb,
+	title={Native Multi-Band Audio Coding within Hyper-Autoencoded Reconstruction Propagation Networks},
+	author={Petermann, Darius and Jang, Inseon and Kim, Minje},
+	year={2023}
+}
