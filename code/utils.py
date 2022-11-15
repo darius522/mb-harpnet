@@ -7,6 +7,7 @@ from audiolazy import *
 from argparse import Namespace
 import math
 
+# borrowed from: https://americodias.com/docs/python/audio_python.md
 def fir_high_pass(samples, fs, fH, N, outputType):
     # Referece: https://fiiir.com
 
