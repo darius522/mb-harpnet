@@ -9,6 +9,6 @@ confs/
 *.ckpt
 *.png
 *.pdf
-*.wav
+/code/**/*.wav
 *.ckpt
 *.ipynb
