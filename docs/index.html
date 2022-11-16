@@ -274,6 +274,10 @@
                     Spectral sub-bands do not portray the same perceptual relevance. In audio coding, it is therefore desirable to have independent control over each of the constitutive bands so that bitrate assignment and signal reconstruction can be achieved efficiently. In this work, we present a novel neural audio coding network that natively supports a multi-band coding paradigm. Our model extends the idea of com- pressed skip connections in the U-Net-based codec, allowing for in- dependent control over both core and high band-specific reconstruc- tions and bitrate assignments. Our system reconstructs the full-band signal mainly from the condensed core-band code, therefore exploit- ing and showcasing its bandwidth extension capabilities to its fullest. Meanwhile, the high-band code sends a small number of bits to help the high-band reconstruction similarly to MPEG audio codec’s spec- tral bandwidth replication. Through MUSHRA tests, we show that the proposed model not only improves the quality of the core band by explicitly assigning more bits to it but retains a good quality in the high-band as well.
 				</p>
 
+				<p style="text-align:center;">
+					<img src="images/overview.png" alt="overview" width="800px" height=auto>
+				</p>
+
         <br clear="all">
     </div>
 
@@ -290,128 +294,306 @@
 
     <div class="content" id="examples">
         <p><strong>Audio Examples</strong>:
-        
-            <h3 style="font-family:arial;text-align:center;">48kbps Models (+16kbps LPC)</h3>
+       
+        <h4 style="font-family:arial;text-align:left;">Pop/Balade</h3>
+        <table>
+			<tr>
+				<th><img src="images/input.png" width="60px"></th>
+			</tr>
+			<tr>
+			<td>
+			<audio controls preload="none" >
+			  <source src="audio/input/3_input_full.wav" type="audio/wav">
+			  Your browser does not support the audio element.
+			</audio>
+			</td>
 
-            <table>
-              <tr>
-                <th>Model</th>
-            <th>Target Bitrate</th>
-                <th>Num. Params</th>
-            <th>MSE</th>
-            <th>Num. Skips</th>
-                <th>Audio#1</th>
-                <th>Audio#2</th>
-                <th>Audio#3</th>
-              </tr>
-    
-              <tr>
-                  <td style="white-space:nowrap;solid:black;">Reference</td>
-                  <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-                <td>
-                    <audio controls preload="none" >
-                      <source src="audio/x4_ref.wav" type="audio/wav">
-                      Your browser does not support the audio element.
-                      </audio>
-                  </td>
-                <td>
-                    <audio controls preload="none" >
-                      <source src="audio/x6_ref.wav" type="audio/wav">
-                      Your browser does not support the audio element.
-                      </audio>
-                  </td>
-                <td>
-                    <audio controls preload="none" >
-                      <source src="audio/x9_ref.wav" type="audio/wav">
-                      Your browser does not support the audio element.
-                      </audio>
-                  </td>
-              </tr> 
-    
-          <tr>
-            <td style="white-space:nowrap;solid:black;">MP3</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>-</td>
-            <td>
-              <audio controls preload="none" >
-              <source src="audio/y4_mp3l.mp3" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-            <td>
-              <audio controls preload="none" >
-              <source src="audio/y6_mp3l.mp3" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-            <td>
-              <audio controls preload="none" >
-              <source src="audio/y9_mp3l.mp3" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-          </tr> 
-    
-              <tr>
-                  <td style="white-space:nowrap">Baseline, Large Bitrate, 1</td>
-            <td>48kbps</td>
-            <td>218k</td>
-            <td>6.24dB</td>
-            <td>-</td>
-            <td>
-              <audio controls preload="none" >
-              <source src="audio/y4_bll0.wav" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-            <td>
-              <audio controls preload="none" >
-              <source src="audio/y6_bll0.wav" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-            <td>
-              <audio controls preload="none" >
-              <source src="audio/y9_bll0.wav" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-    
-              </tr>
-    
-          <tr>
-            <td style="background-color:#10e009">HARPNET, Large Bitrate, 1</td>
-            <td style="background-color:#10e009">48kbps</td>
-            <td style="background-color:#10e009">216k</td>
-            <td style="background-color:#10e009">14.19dB</td>
-            <td style="background-color:#10e009">1</td>
-            <td style="background-color:#10e009">
-              <audio controls preload="none" >
-              <source src="audio/y4_hnl0.wav" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-            <td style="background-color:#10e009">
-              <audio controls preload="none" >
-              <source src="audio/y6_hnl0.wav" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-            <td style="background-color:#10e009">
-              <audio controls preload="none" >
-              <source src="audio/y9_hnl0.wav" type="audio/wav">
-              Your browser does not support the audio element.
-              </audio>
-            </td>
-          </tr>
+
+
+			<tr>
+			<th><img src="images/bl1_40.png" width="150px"></th>
+			<th><img src="images/bl2_40.png" width="150px"></th>
+			<th><img src="images/p346.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl1/3_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl2/3_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/p_34_6/3_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
+
+
+
+			<tr>
+			<th><img src="images/bl1_48.png" width="150px"></th>
+			<th><img src="images/bl2_48.png" width="150px"></th>
+			<th><img src="images/p417.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl1/3_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl2/3_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/p_41_7/3_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
 
 
         </table>
+
+
+<hr style="width:100%;text-align:center;margin-left:0">
+
+       
+        <h4 style="font-family:arial;text-align:left;">Funk</h3>
+        <table>
+			<tr>
+				<th><img src="images/input.png" width="60px"></th>
+			</tr>
+			<tr>
+			<td>
+			<audio controls preload="none" >
+			  <source src="audio/input/9_input_full.wav" type="audio/wav">
+			  Your browser does not support the audio element.
+			</audio>
+			</td>
+
+
+
+			<tr>
+			<th><img src="images/bl1_40.png" width="150px"></th>
+			<th><img src="images/bl2_40.png" width="150px"></th>
+			<th><img src="images/p346.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl1/9_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl2/9_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/p_34_6/9_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
+
+
+
+			<tr>
+			<th><img src="images/bl1_48.png" width="150px"></th>
+			<th><img src="images/bl2_48.png" width="150px"></th>
+			<th><img src="images/p417.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl1/9_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl2/9_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/p_41_7/9_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
+
+
+        </table>
+
+
+<hr style="width:100%;text-align:center;margin-left:0">
+
+
+        <h4 style="font-family:arial;text-align:left;">Jazz</h3>
+        <table>
+			<tr>
+				<th><img src="images/input.png" width="60px"></th>
+			</tr>
+			<tr>
+			<td>
+			<audio controls preload="none" >
+			  <source src="audio/input/13_input_full.wav" type="audio/wav">
+			  Your browser does not support the audio element.
+			</audio>
+			</td>
+
+
+
+			<tr>
+			<th><img src="images/bl1_40.png" width="150px"></th>
+			<th><img src="images/bl2_40.png" width="150px"></th>
+			<th><img src="images/p346.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl1/13_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl2/13_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/p_34_6/13_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
+
+
+			<tr>
+			<th><img src="images/bl1_48.png" width="150px"></th>
+			<th><img src="images/bl2_48.png" width="150px"></th>
+			<th><img src="images/p417.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl1/13_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl2/13_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/p_41_7/13_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
+
+
+        </table>
+
+
+<hr style="width:100%;text-align:center;margin-left:0">
+
+
+        <h4 style="font-family:arial;text-align:left;">Bossa-Nova</h3>
+        <table>
+			<tr>
+				<th><img src="images/input.png" width="60px"></th>
+			</tr>
+			<tr>
+			<td>
+			<audio controls preload="none" >
+			  <source src="audio/input/23_input_full.wav" type="audio/wav">
+			  Your browser does not support the audio element.
+			</audio>
+			</td>
+
+
+
+			<tr>
+			<th><img src="images/bl1_40.png" width="150px"></th>
+			<th><img src="images/bl2_40.png" width="150px"></th>
+			<th><img src="images/p346.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl1/23_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/bl2/23_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/40kbps/p_34_6/23_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
+
+
+
+			<tr>
+			<th><img src="images/bl1_48.png" width="150px"></th>
+			<th><img src="images/bl2_48.png" width="150px"></th>
+			<th><img src="images/p417.png" width="50px"></th>
+			</tr>
+			<tr>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl1/23_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/bl2/23_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			<td>
+			    <audio controls preload="none" >
+			      <source src="audio/48kbps/p_41_7/23_pred_full.wav" type="audio/wav">
+			      Your browser does not support the audio element.
+			      </audio>
+			</td>
+			</tr> 
+
+
+        </table>
+
 
         <br>
         <br>
@@ -419,6 +601,12 @@
         
     </div>  
 
+    <div class="content" id="acknowledgements">
+    	<p><strong>Results</strong>:
+		<p style="text-align:center;">
+			<img src="images/mushra.png" alt="mushra" width="800px" height=auto>
+		</p>
+    </div>
 
     <div class="content" id="acknowledgements">
           <p><strong>Acknowledgements</strong>:

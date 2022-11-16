@@ -7,8 +7,9 @@ results/
 visqol/
 confs/
 *.ckpt
-*.png
-*.pdf
+/code/**/*.png
+/code/**/*.pdf
 /code/**/*.wav
 *.ckpt
 *.ipynb
+.*
