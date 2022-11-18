@@ -7,7 +7,6 @@ import tqdm
 import soundfile as sf
 from pathlib import Path
 import os
-import numpy as np
 import random
 
 from scipy.signal.windows import *

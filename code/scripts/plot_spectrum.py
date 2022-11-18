@@ -1,7 +1,4 @@
-#%%
-import os, sys
-import torch
-from torch.nn import functional as F
+import os
 import numpy as np
 from matplotlib import pyplot as plt
 import soundfile as sf
@@ -49,8 +46,6 @@ fig1, axs1 = plt.subplots(figsize=(7.85,3.04), nrows=1, ncols=1, sharey=True)
 fig2, axs2 = plt.subplots(figsize=(7.85,3.04), nrows=1, ncols=1, sharey=True)
 librosa.display.specshow(librosa.amplitude_to_db(S_bl1_ab,ref=np.max)[:,s_frame:e_frame], y_axis='hz', ax=axs1, sr=32000, cmap='magma')
 librosa.display.specshow(librosa.amplitude_to_db(S_bl1_noab,ref=np.max)[:,s_frame:e_frame], y_axis='hz', ax=axs2, sr=32000, cmap='magma')
-# axs[0].set_ylabel('kHz')
-# axs[1].set_ylabel('kHz')
 
 axs1.set_yticks([0])
 axs1.set_yticklabels([''])
@@ -69,8 +64,6 @@ fig1, axs1 = plt.subplots(figsize=(7.85,3.04), nrows=1, ncols=1, sharey=True)
 fig2, axs2 = plt.subplots(figsize=(7.85,3.04), nrows=1, ncols=1, sharey=True)
 librosa.display.specshow(librosa.amplitude_to_db(S_p_ab,ref=np.max)[:,s_frame:e_frame], y_axis='hz', ax=axs1, sr=32000, cmap='magma')
 librosa.display.specshow(librosa.amplitude_to_db(S_p_noab,ref=np.max)[:,s_frame:e_frame], y_axis='hz' , ax=axs2, sr=32000, cmap='magma')
-# axs[0].set_ylabel('kHz')
-# axs[1].set_ylabel('kHz')
 
 axs1.set_yticks([0])
 axs1.set_yticklabels([''])
@@ -80,10 +73,7 @@ axs1.set_ylabel('')
 axs2.set_ylabel('')
 axs1.set_ylim([8000,16000])
 axs2.set_ylim([8000,16000])
-# axs[1].set_xticks([50,150,250,350])
-# axs[1].set_xticklabels(['50','150','250','350'])
 
 fig.subplots_adjust(hspace=0.3)
 fig1.savefig(os.path.join(out_path,'ab_p_0.pdf'), bbox_inches='tight')
 fig2.savefig(os.path.join(out_path,'ab_p_cb.pdf'), bbox_inches='tight')
-# %%

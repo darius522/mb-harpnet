@@ -1,4 +1,4 @@
-from torch.nn import BatchNorm1d, Conv1d
+from torch.nn import BatchNorm1d
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -6,10 +6,6 @@ import numpy as np
 import pytorch_lightning as pl
 import os
 from pathlib import Path
-import math
-import random
-from torch.nn.utils.spectral_norm import spectral_norm
-import torchaudio
 
 from utils import AverageMeter, get_entropy
 from loguru import logger
@@ -184,9 +180,7 @@ class ScalarSoftmaxQuantization(nn.Module):
         super(ScalarSoftmaxQuantization, self).__init__()
 
         self.eps = 1e-20
-        #p = '/home/daripete/icassp2023/clusters_cb.npy' if 'main' in module_name else '/home/daripete/icassp2023/clusters_hb.npy'
         self.bins = bins
-        #self.bins2 = torch.nn.Parameter(torch.from_numpy(np.load(p,allow_pickle=True)).squeeze())
         self.alpha = alpha
         self.code_length = code_length
         self.feat_maps   = feat_maps
@@ -243,9 +237,4 @@ class ScalarSoftmaxQuantization(nn.Module):
                         
         bit_code = torch.matmul(assignment,self.bins)
         np_bc = bit_code.clone().squeeze().detach().cpu().numpy()
-        # if len(self.acc) == 0:
-        #     self.acc = np_bc
-        # else:
-        #     self.acc = np.concatenate([self.acc, np_bc])
-        #import pdb; pdb.set_trace()
         return bit_code, weighted_code_entropy, weighted_quant_loss

@@ -1,21 +1,16 @@
-from scipy.fft import skip_backend
-from torch.nn import BatchNorm1d, Conv1d, ConvTranspose1d
+from torch.nn import BatchNorm1d
 import torch
 import torch.nn as nn
-from torch.nn import functional as F
 import torchaudio.transforms as T
 import utils
-from scipy.ndimage import filters
 
 from pytorch_lightning.core.lightning import LightningModule
-from pytorch_lightning.callbacks import ModelCheckpoint
 
 import auraloss
 from loguru import logger
 from pytorch_lightning.utilities import rank_zero_only
 
 from .modules import (
-    ScalarSoftmaxQuantization, 
     SkipEncoding, 
     Upsample
 )
@@ -23,7 +18,6 @@ from .modules import (
 import numpy as np
 import soundfile as sf
 import os
-import pandas as pd
 
 def powspace(start, stop, power, num):
     start = np.power(start, 1/float(power))
@@ -70,10 +64,10 @@ class HARPNet(LightningModule):
         
         #Loss
         self.loss = self.loss_fn
-        self.snr = auraloss.time.SNRLoss() #nn.L1Loss(reduction='mean')#
+        self.snr = auraloss.time.SNRLoss()
         self.freq = auraloss.freq.STFTLoss(w_lin_mag=0.0, w_log_mag=1.0, w_phs=0.0, w_sc=0.0, output='loss')
         self.loss_weights = loss_weights
-        self.loss_weights['weighted_entropy'] = 0.0 # we start at 0.0 and increment over time with `entropy_loss_weight_factor`
+        self.loss_weights['weighted_entropy'] = 0.0
         self.baseline = baseline
         
         self.enc_conv      = nn.ModuleList()
@@ -229,10 +223,6 @@ class HARPNet(LightningModule):
         x = self.dec_conv[0](y_cb.clone())
         x = self.dec_conv[1](self.leaky(x))
         x = self.dec_conv[2](self.leaky(x))
-        # from matplotlib import pyplot as plt
-        # plt.imshow(x.detach().cpu().numpy().squeeze()[0,...])
-        # plt.savefig('./lol.png', aspect=10000)
-        #x[...] = 0
         x = self.dec_conv[3](self.leaky(torch.cat((x, skip_layer1), 1)))
         x = self.dec_conv[4](self.leaky(x))
         y_hb = self.dec_conv[5](self.leaky(x))
@@ -330,7 +320,7 @@ class HARPNet(LightningModule):
                     
         yhcb_up = self.resampler(yhcb.squeeze(1)).unsqueeze(1)
         
-        loss, _, _, _, _ = self.loss_fn([ycb,yhb], [yhcb,yhhb])#self.loss_fn([x,ycb,yhb], [(yhcb_up+yhhb),yhcb,yhhb])
+        loss, _, _, _, _ = self.loss_fn([ycb,yhb], [yhcb,yhhb])
         
         return loss
        
@@ -343,7 +333,7 @@ class HARPNet(LightningModule):
         
         yhcb_up = self.resampler(yhcb.squeeze(1)).unsqueeze(1)
         
-        agg, snrs, ent, qua, freqs = self.loss_fn([ycb,yhb], [yhcb,yhhb])#self.loss_fn([x,ycb,yhb], [(yhcb_up+yhhb),yhcb,yhhb])
+        agg, snrs, ent, qua, freqs = self.loss_fn([ycb,yhb], [yhcb,yhhb])
         
         return {'loss':agg, 'snrs':snrs, 'ent':ent, 'qua':qua, 'freqs':freqs}
         
@@ -388,51 +378,46 @@ class HARPNet(LightningModule):
         x, ycb, yhb = batch
         ycb_32 = self.resampler(ycb.squeeze(0)).unsqueeze(0)
 
-        # # batch to time-domain
-        # yfull_seg, ts_32 = utils.prepare_audio(x, H=self.H, in_chan=self.channel, overlap=32)
-        # yhb_seg, _ = utils.prepare_audio(yhb, H=self.H, in_chan=self.channel, overlap=32)
-        # ycb_seg, ts_16 = utils.prepare_audio(ycb, H=self.H//2, in_chan=self.channel, overlap=32)
-        # ycb_32_seg, _ = utils.prepare_audio(ycb_32, H=self.H, in_chan=self.channel, overlap=32)
+        # batch to time-domain
+        yfull_seg, ts_32 = utils.prepare_audio(x, H=self.H, in_chan=self.channel, overlap=32)
+        yhb_seg, _ = utils.prepare_audio(yhb, H=self.H, in_chan=self.channel, overlap=32)
+        ycb_seg, ts_16 = utils.prepare_audio(ycb, H=self.H//2, in_chan=self.channel, overlap=32)
+        ycb_32_seg, _ = utils.prepare_audio(ycb_32, H=self.H, in_chan=self.channel, overlap=32)
         
-        # # predictions
-        # yfull_seg = yfull_seg.cpu()
-        # yhb_seg = yhb_seg.cpu()
-        # ycb_seg = ycb_seg.cpu()
-        # ycb_32_seg = ycb_32_seg.cpu()
+        # predictions
+        yfull_seg = yfull_seg.cpu()
+        yhb_seg = yhb_seg.cpu()
+        ycb_seg = ycb_seg.cpu()
+        ycb_32_seg = ycb_32_seg.cpu()
         
         yhhb, yhcb = self(x.to('cuda'))
-        # yhcb_32 = self.resampler(yhcb.squeeze(1)).unsqueeze(1)
+        yhcb_32 = self.resampler(yhcb.squeeze(1)).unsqueeze(1)
 
-        # # batch to time-domain
-        # yhhb = utils.overlap_add(yhhb, ts_32, H=self.H, in_chan=self.channel, overlap=32, device='cuda')
-        # yhcb = utils.overlap_add(yhcb, ts_16, H=self.H//2, in_chan=self.channel, overlap=32, device='cuda')
-        # yhcb_32 = utils.overlap_add(yhcb_32, ts_32, H=self.H, in_chan=self.channel, overlap=32, device='cuda')
+        # batch to time-domain
+        yhhb = utils.overlap_add(yhhb, ts_32, H=self.H, in_chan=self.channel, overlap=32, device='cuda')
+        yhcb = utils.overlap_add(yhcb, ts_16, H=self.H//2, in_chan=self.channel, overlap=32, device='cuda')
+        yhcb_32 = utils.overlap_add(yhcb_32, ts_32, H=self.H, in_chan=self.channel, overlap=32, device='cuda')
         
-        # # min calc.
-        # mn_32 = min(x.shape[-1],ycb_32.shape[-1],yhb.shape[-1],yhhb.shape[-1],yhcb_32.shape[-1])
+        # min calc.
+        mn_32 = min(x.shape[-1],ycb_32.shape[-1],yhb.shape[-1],yhhb.shape[-1],yhcb_32.shape[-1])
         
-        # # get the band-wise snr
-        # yhhb_filt = torch.from_numpy(utils.fir_high_pass(yhhb[...,:mn_32].detach().cpu().squeeze(), 32000, 8000, 461, np.float32)).reshape(1,-1)
-        # yhb_filt = torch.from_numpy(utils.fir_high_pass(yhb[...,:mn_32].detach().cpu().squeeze(), 32000, 8000, 461, np.float32)).reshape(1,-1)
-        
-        # snr_hb = -auraloss.time.SDSDRLoss()(yhb_filt[...,:mn_32], yhhb_filt[...,:mn_32])#-self.snr_loss(yhb_filt[...,:mn_32], yhhb_filt[...,:mn_32], )
-        # snr_cb = -auraloss.time.SDSDRLoss()(self.resampler(ycb.squeeze(1)).unsqueeze(1)[...,:mn_32], yhcb_32[...,:mn_32])#-self.snr_loss(self.resampler(ycb.squeeze(1)).unsqueeze(1)[...,:mn_32], yhcb_32[...,:mn_32])
-        # snr_full = -auraloss.time.SDSDRLoss()(x[...,:mn_32], (yhhb+yhcb_32)[...,:mn_32])#-self.snr_loss(x[...,:mn_32], (yhhb+yhcb_32)[...,:mn_32])
+        # get the band-wise snr
+        yhhb_filt = torch.from_numpy(utils.fir_high_pass(yhhb[...,:mn_32].detach().cpu().squeeze(), 32000, 8000, 461, np.float32)).reshape(1,-1)
+        yhb_filt = torch.from_numpy(utils.fir_high_pass(yhb[...,:mn_32].detach().cpu().squeeze(), 32000, 8000, 461, np.float32)).reshape(1,-1)
         
         if self.hparams.audio_output_path:
-            pass
-            # sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_input_full.wav'),
-            #          x.cpu().detach().numpy().squeeze()[:mn_32], samplerate=self.sr, subtype='PCM_16')
-            # sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_pred_full.wav'),
-            #          yhhb_filt.cpu().detach().numpy().squeeze()[:mn_32]+yhcb_32.cpu().detach().numpy().squeeze()[:mn_32], samplerate=self.sr)
-            # sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_pred_hb.wav'),
-            #          yhhb_filt.cpu().detach().numpy().squeeze(), samplerate=self.sr)
-            # sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_pred_cb.wav'),
-            #          yhcb.cpu().detach().numpy().squeeze(), samplerate=self.sr)
-            # sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_input_hb.wav'),
-            #          yhb_filt.cpu().detach().numpy().squeeze(), samplerate=self.sr)
-            # sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_input_cb.wav'),
-            #          ycb.cpu().detach().numpy().squeeze(), samplerate=self.sr)
+            sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_input_full.wav'),
+                     x.cpu().detach().numpy().squeeze()[:mn_32], samplerate=self.sr, subtype='PCM_16')
+            sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_pred_full.wav'),
+                     yhhb_filt.cpu().detach().numpy().squeeze()[:mn_32]+yhcb_32.cpu().detach().numpy().squeeze()[:mn_32], samplerate=self.sr)
+            sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_pred_hb.wav'),
+                     yhhb_filt.cpu().detach().numpy().squeeze(), samplerate=self.sr)
+            sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_pred_cb.wav'),
+                     yhcb.cpu().detach().numpy().squeeze(), samplerate=self.sr)
+            sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_input_hb.wav'),
+                     yhb_filt.cpu().detach().numpy().squeeze(), samplerate=self.sr)
+            sf.write(os.path.join(self.hparams.audio_output_path,str(batch_idx)+'_input_cb.wav'),
+                     ycb.cpu().detach().numpy().squeeze(), samplerate=self.sr)
 
         return {'snr_hb':0.0, 'snr_cb':0.0, 'snr_full':0.0}
     
@@ -448,13 +433,6 @@ class HARPNet(LightningModule):
         
         for k, i in output.items():
             logger.info('{} -> {}'.format(k, i))
-        
-        # csv_path = os.path.join(os.path.split(self.hparams.audio_output_path)[0],'results_cb.csv')
-        # df = pd.DataFrame(output)
-        # df.to_csv(csv_path)
-        # for s in self.skip_encoders:
-        #     import  pdb; pdb.set_trace()
-        #     np.save(os.path.join(os.path.split(self.hparams.audio_output_path)[0], 'code_values_{}.npy'.format(s.quant.module_name)), s.quant.acc)
         
     @rank_zero_only
     def val_loss_to_console(self, val_loss, val_loss_snr, val_loss_ent, val_loss_qua, val_loss_freq, entropy, bitrate):

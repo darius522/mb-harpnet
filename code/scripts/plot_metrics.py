@@ -1,16 +1,8 @@
 #%%
-import pandas as pd
 import numpy as np
-import os
-import csv
 from matplotlib import pyplot as plt
-from glob import glob
-
-import random
 import matplotlib
-
 import json
-import ast
 import seaborn as sns
 
 r_dir = '../raw_results'
@@ -35,8 +27,6 @@ def plotBoxMetrics(results, plotTitle=''):
 	matplotlib.rcParams['pdf.fonttype'] = 42
 	matplotlib.rcParams['ps.fonttype'] = 42
 	matplotlib.rcParams['axes.unicode_minus'] = False
-	# matplotlib.rcParams['text.usetex'] = True
-	# #matplotlib.rcParams['text.latex.preamble'] = [r'\usepackage{amsmath}'] #for \text command
 
 	f = plt.figure(figsize=(18,9))
 	names = ['reference','C7','C6','C5','C4','C3','C2','C1','anchor35']
@@ -50,9 +40,6 @@ def plotBoxMetrics(results, plotTitle=''):
 	real_names = [pretty_names[i] for i in names]
 
 	sns.set_style("whitegrid")  # "white","dark","darkgrid","ticks"
-	# p1 = np.array(sns.color_palette("Reds", 3))
-	# p2 = np.array(sns.color_palette("Blues", 3))
-	# palette = np.concatenate([p1,p2])
 	boxprops = dict(linestyle='-', linewidth=2.5, color='#00145A', facecolor='white')
 	flierprops = dict(marker='o', markersize=0,
 					  linestyle='none')
@@ -97,67 +84,6 @@ def plotBoxMetrics(results, plotTitle=''):
 	plt.savefig('../plots/mushra.pdf')
 	plt.savefig('../plots/mushra.png')
 
-def plot_models_mse():
-
-	font = {'family' : 'normal',
-		'size'   : 30}
-	matplotlib.rc('font', **font)
-	matplotlib.rcParams['pdf.fonttype'] = 42
-	matplotlib.rcParams['ps.fonttype'] = 42
-
-	results = glob(os.path.join(r_dir,'*.npy'))
-	bl = sorted([x for x in results if 'bl' in x])
-	hl = sorted([x for x in results if 'hl' in x])
-	bs = sorted([x for x in results if 'bs' in x])
-	hs = sorted([x for x in results if 'hs' in x])
-
-	bl_means = []
-	bl_stds  = []
-	hl_means = []
-	hl_stds  = []
-	bs_means = []
-	bs_stds  = []
-	hs_means = []
-	hs_stds  = []
-
-	for i in range(4):
-		bl_means.append(np.mean(np.load(bl[i])))
-		bl_stds.append(np.std(np.load(bl[i])))
-
-		hl_means.append(np.mean(np.load(hl[i])))
-		hl_stds.append(np.std(np.load(hl[i])))
-
-		bs_means.append(np.mean(np.load(bs[i])))
-		bs_stds.append(np.std(np.load(bs[i])))
-
-		hs_means.append(np.mean(np.load(hs[i])))
-		hs_stds.append(np.std(np.load(hs[i])))
-
-
-	fig, ax = plt.subplots(figsize=(8,8))
-
-	e1 = plt.errorbar([1,2,3,4], bs_means, bs_stds, marker='o', barsabove=True, capthick=2.0, capsize=10.0, color='tab:red', label='Baseline 40-kbps', alpha=0.8)
-	e1[-1][0].set_linestyle('--')
-	e2 = plt.errorbar([1,2,3,4], hs_means, hs_stds, marker='o', barsabove=True, capthick=2.0, capsize=10.0, color='black', label='HARP-Net 40-kbps', alpha=0.8)
-	e2[-1][0].set_linestyle('--')
-	plt.legend(loc='lower center')
-	plt.ylabel('SNR (dB)')
-	plt.xticks([1, 2, 3, 4],['1 Skip', '2 Skips', '3 Skips', '4 Skips'])
-	plt.ylim([-1,23])
-
-	# e1 = ax[1].errorbar([1,2,3,4], bl_means, bl_stds, marker='o', barsabove=True, capthick=2.0, capsize=10.0, color='tab:red', label='Baseline 48-kbps', alpha=0.8)
-	# e1[-1][0].set_linestyle('--')
-	# e2 = ax[1].errorbar([1,2,3,4], hl_means, hl_stds, marker='o', barsabove=True, capthick=2.0, capsize=10.0, color='black', label='HARPNET 48-kbps', alpha=0.8)
-	# e2[-1][0].set_linestyle('--')
-	# ax[1].legend(loc='lower center')
-	# ax[1].set_xticks([1, 2, 3, 4])
-	# ax[1].set_xticklabels(['1 Skip', '2 Skips', '3 Skips', '4 Skips'])
-	# ax[1].set_ylim([-1,23])
-
-	plt.grid()
-	plt.tight_layout()
-	plt.savefig('../plots/mse_models_40.pdf')
-
 
 def plot_mushra():
 	stimuli = ['C1','C2','C3','C4','C5','C6','C7','reference','anchor35']
@@ -176,16 +102,6 @@ def plot_mushra():
 				if trial['stimulus'] == 'reference' and trial['score'] != '100':
 					missed_ref += 1
 				results[trial['stimulus']].append(trial['score'])
-		print(p_id, missed_ref)
 	plotBoxMetrics(results)
 
-#plot_models_mse()
 plot_mushra()
-
-
-
-
-
-
-
-# %%

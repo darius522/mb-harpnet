@@ -100,18 +100,8 @@ def main(args):
 
 if __name__ == '__main__':
     
-    # 40kbps
-    bl1_40 = "/home/daripete/icassp2023/experiment/selected/40kbps/bl1/8bits_freq_3106160"
-    bl2_40 = "/home/daripete/icassp2023/experiment/selected/40kbps/bl2/8bits_2587440_freq"
-    p_40   = "/home/daripete/icassp2023/experiment/selected/40kbps/p_34_6/8bits_freq_513799"
-
-    # 48kbps
-    bl1_48 = "/home/daripete/icassp2023/experiment/selected/48kbps/bl1/8bits_freq_1548278"
-    bl2_48 = "/home/daripete/icassp2023/experiment/selected/48kbps/bl2/8bits_freq_1549225"
-    p_48   = "/home/daripete/icassp2023/experiment/selected/48kbps/p_41_7/8bits_freq_2141943"
-    
     parser = argparse.ArgumentParser()
-    parser.add_argument('--exp-path', type=str, default=p_48)
+    parser.add_argument('--exp-path', type=str, default=None)
     parser.add_argument('--ckpt-path', type=str, default=None)
     parser.add_argument('--devices', type=str, default='0')
     parser.add_argument('--gpus', type=int, default=1)
@@ -123,10 +113,3 @@ if __name__ == '__main__':
     parser.add_argument('--selected-tracks', type=list, default=None)
 
     main(parser.parse_args())
-
-# MUSHRA songs
-# [0,8,11,12,16,17,21,23,24,25,31,38,44,45,48,49,53,55,62,63,66,73,84,88,92]
-# Selected MUSHRA
-# [12,25,45,55,63,66,88,92]
-# Ablation songs
-# [142,203,65,70,233,211,231,281,244,234,182,96,273,164,20,41,299,108]
